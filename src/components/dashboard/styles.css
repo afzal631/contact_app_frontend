@@ -1,0 +1,16 @@
+.scroll-container {
+   
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: black white; /* Firefox */
+  
+    /* WebKit-based browsers (Chrome, Safari, Edge) */
+    &::-webkit-scrollbar {
+      width: 4px; /* Adjust the width of the track */
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: white; /* Color of the thumb (scrollbar handle) */
+      /* border: 2px solid black; Border around the thumb */
+    }
+  }
