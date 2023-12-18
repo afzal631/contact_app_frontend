@@ -1,23 +1,59 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Dashboard from "./components/dashboard/Dashboard";
-// import Header from "./components/header/Header";
-// import { Login } from "@mui/icons-material";
 import Signup from "./components/singup/Signup";
+import { createContext, useState } from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
+import logo from "./login.svg";
+
+export const user_context = createContext();
 
 function App() {
+  const [userData, setUserData] = useState("");
+  const [user, setUser] = useState(null);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUserData("");
+    window.location.reload();
+  };
+
+  const router = createBrowserRouter([
+    {
+      path: "/dashboard",
+      element: (
+        <ProtectedRoute setUser={setUser} user={user}>
+          <Dashboard /> 
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/",
+      element: <Signup />,
+    },
+    {
+      path: "/signup",
+      element: <Signup />,
+    },
+  ]);
+
   return (
-    <div className="App flex justify-center items-center bg-[#2C2A2A] text-white h-screen">
-      {/* <Header /> */}
-      {/* <Dashboard /> */}
-      {/* <p>hello</p> */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Signup />} />
-          <Route path="/login" element={<Signup />} />
-          <Route path="/homePage" element={<Dashboard />} />
-        </Routes>
-      </BrowserRouter>
+    <div>
+      <div
+        className=" flex justify-center items-center  text-white "
+        style={{
+          backgroundImage: `url(${logo})`,
+          backgroundSize: " cover",
+          backgroundRepeat: "no-repeat",
+          width: "100%",
+          minHeight: "100vh",
+        }}
+      >
+        <user_context.Provider
+          value={{ setUserData, userData, logout, setUser, user }}
+        >
+          <RouterProvider router={router} />
+        </user_context.Provider>
+      </div>
     </div>
   );
 }

@@ -7,8 +7,11 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import addNew from "../../assets/public/addNew.svg";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function Addnew() {
+export default function Addnew({ token, setAllContacts }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -17,6 +20,48 @@ export default function Addnew() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get("username");
+    const email = formData.get("email");
+    const phone = formData.get("phone");
+    const title = formData.get("title");
+    const group = formData.get("group");
+
+    if (!name || !email || !phone) return console.error("fields required");
+    try {
+      const data = JSON.stringify({
+        name,
+        email,
+        phone,
+        title,
+        group,
+      });
+
+      const response = await axios.post(
+        "https://merncontactbackend.onrender.com/api/contacts/",
+        data, // Directly pass the data here
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.message === "Contact created successfully.") {
+        toast.success(response.data.message);
+        setOpen(false);
+        setAllContacts((prev) => [...prev, response.data.data[0]]);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (e) {
+      console.log("Error", e);
+    }
   };
 
   return (
@@ -43,83 +88,81 @@ export default function Addnew() {
         >
           Add new contact
         </DialogTitle>
-        <DialogContent>
-          {/* <DialogContentText>
+        <form onSubmit={handleSubmit}>
+          <DialogContent>
+            {/* <DialogContentText>
             To subscribe to this website, please enter your email address here.
             We will send updates occasionally.
           </DialogContentText> */}
-          <TextField
-            required
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            required
-            autoFocus
-            margin="dense"
-            id="email"
-            label="Email Address"
-            type="email"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            required
-            autoFocus
-            margin="dense"
-            id="phone"
-            label="phone Number"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="company"
-            label="Company Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="title"
-            label="Designation"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="relation"
-            label="Relation"
-            type="email"
-            fullWidth
-            variant="outlined"
-          />
-        </DialogContent>
-        <DialogActions>
-          <button
-            onClick={handleClose}
-            className="bg-red-300 w-full border-2 border-red-600 rounded-3xl p-3"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleClose}
-            className="bg-blue-300 w-full border-2 border-blue-600 rounded-3xl p-3"
-          >
-            Save
-          </button>
-        </DialogActions>
+            <TextField
+              required
+              autoFocus
+              name="username"
+              margin="dense"
+              id="name"
+              label="username"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              required
+              autoFocus
+              name="email"
+              margin="dense"
+              id="email"
+              label="Email Address"
+              type="email"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              required
+              autoFocus
+              name="phone"
+              margin="dense"
+              id="phone"
+              label="phone Number"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              name="title"
+              id="title"
+              label="title"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              name="group"
+              id="relation"
+              label="group"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+          </DialogContent>
+          <DialogActions>
+            <button
+              onClick={handleClose}
+              className="bg-red-300 w-full border-2 border-red-600 rounded-3xl p-3"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="bg-blue-300 w-full border-2 border-blue-600 rounded-3xl p-3"
+            >
+              Save
+            </button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   );

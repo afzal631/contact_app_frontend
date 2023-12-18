@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import Logo from "../../assets/public/Logo.svg";
 import { Avatar } from "@mui/material";
 import { motion } from "framer-motion";
+import { user_context } from "../../App";
 
-function Header() {
+function Header({ username }) {
+  const { logout } = useContext(user_context);
+  const user = username?.split("");
+
   return (
     <motion.div
       initial={{ y: "-80%" }}
@@ -15,8 +19,12 @@ function Header() {
         <img src={Logo} alt="logo" className="w-[2rem]" />
         <span className="text-lg font-bold">CONTACT APP</span>
       </div>
-      <div className="flex items-center  font-semibold gap-3">
-        Hello Afzal! <Avatar>A</Avatar>
+      <div
+        className="flex items-center  font-semibold gap-3 cursor-pointer"
+        onClick={() => logout()}
+      >
+        {username ? username.toUpperCase() : "user"}{" "}
+        <Avatar>{user ? user[0]?.toUpperCase() : "U"}</Avatar>
       </div>
     </motion.div>
   );
