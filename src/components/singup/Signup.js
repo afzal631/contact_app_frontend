@@ -58,7 +58,7 @@ function a11yProps(index) {
 // };
 
 export default function Signup() {
-  // const { setUserData, userData } = useContext(user_context);
+  const { setUserData, userData } = useContext(user_context);
   const [value, setValue] = React.useState(0);
   const [showPassword, setShowpassword] = React.useState(false);
   const [showLoginPassword, setLoginShowpassword] = React.useState(false);
@@ -104,7 +104,7 @@ export default function Signup() {
       if (response.data.message === "User logged in successfully") {
         toast.success(response.data.message);
         localStorage.setItem("token", response.data.Token);
-        // setUserData(response.data);
+        setUserData(response.data);
         navigate("/dashboard");
       } else {
         setLoginError(response.data.message);
@@ -147,6 +147,7 @@ export default function Signup() {
       console.log("Error ", e);
     }
   };
+  console.log(userData)
   return (
     <div
       sx={{ width: "24%" }}
