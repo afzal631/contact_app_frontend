@@ -18,6 +18,7 @@ export default function Dashboard() {
   const { logout, user } = useContext(user_context);
   const token = localStorage.getItem("token") || "";
   const [username, setUsername] = useState("");
+  const [deleted,setdeleted]=useState("");
   const [AllContacts, setAllContacts] = useState([]);
   const [OpenContacts, setOpenContacts] = useState("");
   const [search, setSearch] = useState("");
@@ -41,7 +42,7 @@ export default function Dashboard() {
   };
   useEffect(() => {
     get_all_contacts();
-  }, [AllContacts]);
+  }, [AllContacts,deleted]);
   useEffect(() => {
     // get_all_contacts();
     if (!user || user === "") {
@@ -69,6 +70,7 @@ export default function Dashboard() {
       if (response.data.message === "Contact deleted successfully.") {
         AllContacts.filter((deleted) => deleted._id === response.data.data[0]);
         get_all_contacts();
+        setdeleted(prev=>...prev+1)
       }
     } catch (e) {
       console.log("Error", e);
